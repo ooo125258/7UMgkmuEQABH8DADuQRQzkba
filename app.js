@@ -20,8 +20,13 @@ if ('addRest' in yargs_argv) {
 	const rest = reservations.addRestaurant(args[0], args[1]);	
 	if (rest.length > 0) {
 		/* complete */ 
+
+		log("Added restaurant " + rest[0].name +'.')
+
 	} else {
 		/* complete */ 
+		//When duplicated.
+		log("Duplicate restaurant not added.");
 	}
 }
 
@@ -30,19 +35,29 @@ if ('addResv' in yargs_argv) {
 	const resv = reservations.addReservation(args[0], args[1], args[2]);
 
 	// Produce output below
-	
+	const reservationDate = new Date(args[1] + " GMT");
+	console.log(reservationDate)
+	log('Added reservation at ' + args[0] + " on " 
+	+ reservations.timeStringTranslate(reservationDate) + ' for ' + args[2] + " people.");
+
 }
 
 if ('allRest' in yargs_argv) {
 	const restaurants = reservations.getAllRestaurants(); // get the array
-	
+
 	// Produce output below
+	const printAllRest = restaurants.map(
+		function(restaurant){
+			log(restaurant.name + ': ' + restaurant.description + ' - ' + String(restaurant.numReservations) + ' active reservations')
+		}
+	);
 }
 
 if ('restInfo' in yargs_argv) {
 	const restaurants = reservations.getRestaurtantByName(yargs_argv['restInfo']);
 
 	// Produce output below
+	log(restaurants.name + ': ' + restaurants.description + ' - ' + String(restaurants.numReservations) + ' active reservations')
 
 }
 
@@ -51,6 +66,11 @@ if ('allResv' in yargs_argv) {
 	const reservationsForRestaurant = reservations.getAllReservationsForRestaurant(restaurantName); // get the arary
 	
 	// Produce output below
+	const printAllResv = reservationsForRestaurant.map(
+		function(reservation){
+			log(reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
+		}
+	);
 }
 
 if ('hourResv' in yargs_argv) {
@@ -58,6 +78,11 @@ if ('hourResv' in yargs_argv) {
 	const reservationsForRestaurant = reservations.getReservationsForHour(time); // get the arary
 	
 	// Produce output below
+	const printAllResv = reservationsForRestaurant.map(
+		function(reservation){
+			log(reservation.restaurant + ": " + reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
+		}
+	)
 }
 
 if ('checkOff' in yargs_argv) {
