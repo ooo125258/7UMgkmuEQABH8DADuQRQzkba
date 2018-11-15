@@ -121,8 +121,9 @@ const getRestaurtantByName = (name) => {
 	As I assume there is only one restaurant with one name. */
 	/* Add your code below */
 	const restaurants = getAllRestaurants();
-	restaurants.filter(restaurant => restaurant.name ===name);
-	return restaurants[0];
+	const restaurant_filtered = restaurants.filter(restaurant => restaurant.name === name);
+	
+	return restaurant_filtered;
 };
 
 // Should return an array - check to make sure reservations.json exists

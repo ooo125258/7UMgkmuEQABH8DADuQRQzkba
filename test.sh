@@ -6,6 +6,10 @@ echo node app.js --allRest
 node app.js --allRest
 echo node app.js --restInfo "Red Lobster"
 node app.js --restInfo "Red Lobster"
+echo node app.js --restInfo "ed Lobster"
+node app.js --restInfo "ed Lobster"
+echo node app.js --restInfo
+node app.js --restInfo
 echo node app.js --allResv "Red Lobster"
 node app.js --allResv "Red Lobster"
 echo node app.js --hourResv "Nov 17 2018 16:30:00"

@@ -57,7 +57,9 @@ if ('restInfo' in yargs_argv) {
 	const restaurants = reservations.getRestaurtantByName(yargs_argv['restInfo']);
 
 	// Produce output below
-	log(restaurants.name + ': ' + restaurants.description + ' - ' + String(restaurants.numReservations) + ' active reservations')
+	if (restaurants.length > 0){
+		log(restaurants[0].name + ': ' + restaurants[0].description + ' - ' + String(restaurants[0].numReservations) + ' active reservations');
+	}
 
 }
 
