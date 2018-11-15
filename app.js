@@ -87,9 +87,11 @@ if ('hourResv' in yargs_argv) {
 
 if ('checkOff' in yargs_argv) {
 	const restaurantName = yargs_argv['checkOff']
-	const earliestReservation = reservations.checkOffEarlistReservation(restaurantName); 
+	const earliestReservation = reservations.checkOffEarliestReservation(restaurantName); 
 	
 	// Produce output below
+	log('Checked off reservation on ' + reservations.timeStringTranslate(earliestReservation.time) +", table for " + earliestReservation.people);
+
 }
 
 if ('addDelay' in yargs_argv) {

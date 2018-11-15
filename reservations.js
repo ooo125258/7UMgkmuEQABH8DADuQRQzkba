@@ -58,7 +58,7 @@ const saveReservationsToJSONFile = (reservations) => {
 const addRestaurant = (name, description) => {
 	// Check for duplicate names
 	const restaurants = getAllRestaurants();
-	const ifExisted = restaurants.filter(restaurant => restaurant.name == name);
+	const ifExisted = restaurants.filter(restaurant => restaurant.name ===name);
 	if (ifExisted.length > 0){
 		return [];
 	}
@@ -91,7 +91,7 @@ const addReservation = (restaurant, time, people) => {
 	const printAllRest = restaurants.map(
 		function(restaurant){
 			let newRest = restaurant;
-			if (restaurant.name == reservation.restaurant){
+			if (restaurant.name ===reservation.restaurant){
 				newRest.numReservations += 1;
 			}
 			updated_restaurants.push(newRest);
@@ -101,7 +101,6 @@ const addReservation = (restaurant, time, people) => {
 	return reservation;
 
 }
-
 
 /// Getters - use functional array methods when possible! ///
 
@@ -122,7 +121,7 @@ const getRestaurtantByName = (name) => {
 	As I assume there is only one restaurant with one name. */
 	/* Add your code below */
 	const restaurants = getAllRestaurants();
-	restaurants.filter(restaurant => restaurant.name == name);
+	restaurants.filter(restaurant => restaurant.name ===name);
 	return restaurants[0];
 };
 
@@ -141,7 +140,7 @@ const getAllReservations = () => {
 const getAllReservationsForRestaurant = (name) => {
 	/* Add your code below */
 	const reservations = getAllReservations();
-	const reservations_filtered = reservations.filter(reservation => reservation.restaurant == name);
+	const reservations_filtered = reservations.filter(reservation => reservation.restaurant ===name);
 	return reservations_filtered;
 };
 
@@ -167,7 +166,48 @@ const getReservationsForHour = (time) => {
 
 const checkOffEarliestReservation = (restaurantName) => {
 	
-	const checkedOffReservation = null;
+	let checkedOffReservation = null;
+	const reservationsFromName = getAllReservationsForRestaurant(restaurantName);
+	//I know it's a little bit ridiculous, but map is a sync function 
+	//and I don't wanna use for.
+	//1 map all dates
+	let dict = {};
+	const printAllResv = reservationsFromName.map(
+		function(reservation){
+			dict[reservation.time] = reservation;
+		}
+	)
+	//2 finded the earliest
+
+	const keys = Object.keys(dict);
+	//Is this the earliest? Check later!
+	const sorted_keys = keys.sort(function(a,b){
+		return Date.parse(a) > Date.parse(b);
+	})
+
+	//3 find who has this time and remove
+	//Save to reservations
+	checkedOffReservation = dict[sorted_keys[0]];
+	const reservations = getAllReservations();
+	const reservationsToKeep = reservations.filter(reservation => (reservation.restaurant !== restaurantName) || (reservation.time !== sorted_keys[0]));
+	saveReservationsToJSONFile(reservationsToKeep);
+
+	//Update to restaurants
+	const restaurants = getAllRestaurants();
+	let updated_restaurants = [];
+	const printAllRest = restaurants.map(
+		function(restaurant){
+			if (restaurant !== undefined){
+				let newRest = restaurant;
+				if (restaurant.name === checkedOffReservation.restaurant){
+					newRest.numReservations -= 1;
+				}
+				updated_restaurants.push(newRest);
+			}
+		}
+	);
+	saveRestaurantsToJSONFile(updated_restaurants);
+
  	return checkedOffReservation;
 }
 
