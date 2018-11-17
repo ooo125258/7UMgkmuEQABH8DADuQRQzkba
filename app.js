@@ -36,7 +36,6 @@ if ('addResv' in yargs_argv) {
 
 	// Produce output below
 	const reservationDate = new Date(args[1] + " GMT");
-	console.log(reservationDate)
 	log('Added reservation at ' + args[0] + " on " 
 	+ reservations.timeStringTranslate(reservationDate) + ' for ' + args[2] + " people.");
 
@@ -68,9 +67,10 @@ if ('allResv' in yargs_argv) {
 	const reservationsForRestaurant = reservations.getAllReservationsForRestaurant(restaurantName); // get the arary
 	
 	// Produce output below
+	log('Reservations for ' + restaurantName + ":");
 	const printAllResv = reservationsForRestaurant.map(
 		function(reservation){
-			log(reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
+			log('- '+reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
 		}
 	);
 }
@@ -80,9 +80,10 @@ if ('hourResv' in yargs_argv) {
 	const reservationsForRestaurant = reservations.getReservationsForHour(time); // get the arary
 	
 	// Produce output below
+	log('Reservations in the next hour:');
 	const printAllResv = reservationsForRestaurant.map(
 		function(reservation){
-			log(reservation.restaurant + ": " + reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
+			log('- ' + reservation.restaurant + ": " + reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
 		}
 	)
 }
@@ -101,12 +102,23 @@ if ('addDelay' in yargs_argv) {
 	const resv = reservations.addDelayToReservations(args[0], args[1]);	
 
 	// Produce output below
-	
+	log('Reservations for ' + args[0] + ":");
+	const printAllResv = resv.map(
+		function(reservation){
+			log('- '+reservations.timeStringTranslate(reservation.time) + ', table for ' + reservation.people);
+		}
+	);
 }
 
 if ('status' in yargs_argv) {
+	log('in main status')
 	const status = reservations.getSystemStatus()
-
+	log('in main, ')
+	log(status)
 	// Produce output below
+	log("Number of restaurants: " + status.numRestaurants);
+	log("Number of total reservations: " + status.totalReservations);
+	log("Busiest restaurant: " + status.currentBusiestRestaurantName);
+	log("System started at: " + reservations.timeStringTranslate(new Date(status.systemStartTime)));
 }
 

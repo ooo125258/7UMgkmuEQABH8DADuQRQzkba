@@ -6,12 +6,13 @@ const fs = require('fs');
 const datetime = require('date-and-time')
 
 const startSystem = () => {
-
+	log('in startSystem')
 	let status = {};
 
 	try {
 		status = getSystemStatus();
 	} catch(e) {
+		console.log('statusJsonNotFound!')
 		status = {
 			numRestaurants: 0,
 			totalReservations: 0,
@@ -26,19 +27,55 @@ const startSystem = () => {
 }
 
 const getSystemStatus = () => {
-	const status = fs.readFileSync('status.json')
-	return JSON.parse(status)
+	log('in getSystem')
+	const status = fs.readFileSync('status.json');
+	const retStatus = JSON.parse(status);
+	const updated_retStatus = updateSystemStatus();
+	//const updated_status = fs.readFileSync('status.json');
+	//const updated_retStatus = JSON.parse(updated_status);
+	return updated_retStatus;
 }
 
 /*********/
 
+const getCurrentSystemStatus = () =>{
+	const status = fs.readFileSync('status.json');
+	return JSON.parse(status);
+}
+
 /* Helper functions to save JSON */
 const updateSystemStatus = () => {
-	const status = {}
-	
+	log('in UpdateSystem')
+	const status = getCurrentSystemStatus();
 	/* Add your code below */
+	const restaurants = getAllRestaurants();
+	const numRestaurants = restaurants.length;
+	const reservations = getAllReservations();
+	const numReservations = reservations.length;
 
-	fs.writeFileSync('status.json', JSON.stringify(status))
+	let dict = [];
+	restaurants.map(
+		function(restaurant){
+			dict[restaurant.numReservations] = restaurant;
+		}
+	)
+	const keys = Object.keys(dict);
+	const sorted_keys = keys.sort(function(a,b){
+		return a - b;
+	})
+	const busiestRestaurant = dict[sorted_keys[sorted_keys.length - 1]].name;
+	console.log('status!')
+	console.log(status);
+
+	const new_status = {
+		numRestaurants: numRestaurants,
+		totalReservations: numReservations,
+		currentBusiestRestaurantName: busiestRestaurant,
+		systemStartTime: status.systemStartTime,
+	}
+	console.log(new_status);
+	fs.writeFileSync('status.json', JSON.stringify(new_status))
+	return new_status;
 }
 
 const saveRestaurantsToJSONFile = (restaurants) => {
@@ -91,7 +128,7 @@ const addReservation = (restaurant, time, people) => {
 	const printAllRest = restaurants.map(
 		function(restaurant){
 			let newRest = restaurant;
-			if (restaurant.name ===reservation.restaurant){
+			if (restaurant.name === reservation.restaurant){
 				newRest.numReservations += 1;
 			}
 			updated_restaurants.push(newRest);
@@ -215,7 +252,23 @@ const checkOffEarliestReservation = (restaurantName) => {
 
 const addDelayToReservations = (restaurant, minutes) => {
 	// Hint: try to use array.map()
-	
+	const reservations = getAllReservations();
+	const reservationsForRestaurant = getAllReservationsForRestaurant(restaurant);
+	let newReservations = [];
+	let retReservations = [];
+	reservations.map(
+		function(reservation){
+			if (reservation.restaurant === restaurant){
+				const currDate = new Date(reservation.time);
+				const delayedDate = new Date(currDate.getTime() + minutes * 60 * 1000);
+				reservation.time = delayedDate;
+				retReservations.push(reservation);
+			}
+			newReservations.push(reservation);
+		}
+	)
+	saveReservationsToJSONFile(newReservations);
+	return retReservations;
 }
 
 const timeStringTranslate = (timestring) => {
